@@ -1,3 +1,4 @@
+import type { NextApiRequest, NextApiResponse } from "next";
 import fs from 'fs';
 import path from 'path';
 import { v4 as uuidv4 } from 'uuid';
@@ -5,10 +6,17 @@ import { v4 as uuidv4 } from 'uuid';
 // Caminho absoluto para o arquivo de dados
 const filePath = path.join(process.cwd(), 'src', 'pages', 'api', 'bd.json');
 
-export default function handler(req, res) {
+interface Usuario {
+  id: string;
+  nome: string;
+  email: string;
+  telefone: string;
+}
+
+export default function handler(req: NextApiRequest, res: NextApiResponse) {
     const jsonData = fs.readFileSync(filePath, 'utf-8');
     const parsed = JSON.parse(jsonData);
-    const usuarios = parsed.usuarios || [];
+    const usuarios: Usuario[] = parsed.usuarios || [];
 
     const { nome, email, telefone } = req.body
 
