@@ -15,18 +15,18 @@ function normalizar(texto: string) {
 
 export default function handler(req: NextApiRequest, res: NextApiResponse) {
   type Livro = {
-    id: string;
-    titulo: string;
-    autor: string;
-    genero: string;
-    quantidade: number;
-    qtdEmprestados: number;
-    [key: string]: unknown;
+    id: string
+    titulo: string
+    autor: string
+    genero: string
+    quantidade: number
+    qtdEmprestados: number
+    [key: string]: unknown
   };
 
   const jsonData = fs.readFileSync(filePath, "utf-8");
-  const parsed = JSON.parse(jsonData) as { livros?: Livro[] };
-  const livros = parsed.livros ?? [];
+  const parsed = JSON.parse(jsonData) as { livros?: Livro[] }
+  const livros = parsed.livros ?? []
 
   const { titulo, autor, genero, quantidade } = req.body;
 
@@ -44,7 +44,7 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
   );
 
   if (livroExistente) {
-    livroExistente.quantidade += Number(quantidade);
+    livroExistente.quantidade += Number(quantidade)
 
     fs.writeFileSync(
       filePath,

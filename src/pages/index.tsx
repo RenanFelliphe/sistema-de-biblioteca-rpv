@@ -5,37 +5,32 @@ import * as z from "zod";
 import Link from "next/link";
 
 interface Usuario {
-  id: string
-  nome: string
-  email: string
+  id: string;
+  nome: string;
+  email: string;
 }
 
 interface Livro {
-  id: string
-  titulo: string
-  autor: string
-  genero: string
-  quantidade: number
-  qtdEmprestados: number
+  id: string;
+  titulo: string;
+  autor: string;
+  genero: string;
+  quantidade: number;
+  qtdEmprestados: number;
 }
 
 interface Emprestimo {
-  id: string
-  usuarioId: string
-  livrosIds: string[]
-  status: string
-  data: string
-  dataDevolucao?: string
+  id: string;
+  usuarioId: string;
+  livrosIds: string[];
+  status: string;
+  data: string;
+  dataDevolucao?: string;
 }
 
 const usuarioSchema = z.object({
-  nome: z
-    .string()
-    .min(3, "Campo obrigatório"),
-  email: z
-    .string()
-    .min(1, "Campo obrigatório")
-    .email("E-mail inválido"),
+  nome: z.string().min(3, "Campo obrigatório"),
+  email: z.string().min(1, "Campo obrigatório").email("E-mail inválido"),
   telefone: z
     .string()
     .min(1, "Campo obrigatório")
@@ -47,33 +42,30 @@ const usuarioSchema = z.object({
 });
 
 const livroSchema = z.object({
-  titulo: z
-    .string()
-    .min(1, "O título é obrigatório"),
-  autor: z
-    .string()
-    .min(3, "O autor é obrigatório"),
-  genero: z
-    .string()
-    .min(5, "O gênero é obrigatório"),
-  quantidade: z
-    .number("Quantidade inválida")
-    .positive("A quantidade é obrigatória"),
+  titulo: z.string().min(1, "O título é obrigatório"),
+  autor: z.string().min(3, "O autor é obrigatório"),
+  genero: z.string().min(5, "O gênero é obrigatório"),
+  quantidade: z.number().positive("A quantidade é obrigatória"),
+});
+
+const emprestimoSchema = z.object({
+  usuarioId: z.string().min(1, "Campo obrigatório"),
+  livroId: z.string().min(1, "Campo obrigatório"),
+});
+
+const devolucaoSchema = z.object({
+  emprestimoId: z.string().min(1, "Campo obrigatório"),
 });
 
 type UsuarioForm = z.infer<typeof usuarioSchema>;
 type LivroForm = z.infer<typeof livroSchema>;
+type EmprestimoForm = z.infer<typeof emprestimoSchema>;
+type DevolucaoForm = z.infer<typeof devolucaoSchema>;
 
 export default function Home() {
   const [usuarios, setUsuarios] = useState<Usuario[]>([]);
   const [livros, setLivros] = useState<Livro[]>([]);
   const [emprestimos, setEmprestimos] = useState<Emprestimo[]>([]);
-  const [emprestimoData, setEmprestimoData] = useState({
-    usuarioId: "",
-    livroId: "",
-  });
-
-  const [devolucaoId, setDevolucaoId] = useState("");
 
   const [livroDuplicado, setLivroDuplicado] = useState<Livro | null>(null);
   const [generoBloqueado, setGeneroBloqueado] = useState(false);
@@ -97,6 +89,24 @@ export default function Home() {
     setValue,
   } = useForm<LivroForm>({
     resolver: zodResolver(livroSchema),
+  });
+
+  const {
+    register: registerEmprestimo,
+    handleSubmit: emprestimoHandleSubmit,
+    formState: { errors: emprestimoErrors },
+    reset: resetEmprestimo,
+  } = useForm<EmprestimoForm>({
+    resolver: zodResolver(emprestimoSchema),
+  });
+
+  const {
+    register: registerDevolucao,
+    handleSubmit: devolucaoHandleSubmit,
+    formState: { errors: devolucaoErrors },
+    reset: resetDevolucao,
+  } = useForm<DevolucaoForm>({
+    resolver: zodResolver(devolucaoSchema),
   });
 
   function normalizar(texto: string) {
@@ -164,13 +174,18 @@ export default function Home() {
       .filter(Boolean)
       .join(", ");
 
-    if (e.status === "ativo") return ` ${titulos} | Emprestado em ${formatarData(e.data)} para ${nome}`;
+    if (e.status === "ativo")
+      return `${titulos} | Emprestado em ${formatarData(e.data)} para ${nome}`;
 
-    return `${titulos} | Devolvido em ${formatarData(e.dataDevolucao || e.data)} por ${nome}`;
+    return `${titulos} | Devolvido em ${formatarData(
+      e.dataDevolucao || e.data
+    )} por ${nome}`;
   }
 
   const emprestimosAtivos = emprestimos.filter((e) => e.status === "ativo");
-  const emprestimosConcluidos = emprestimos.filter((e) => e.status === "concluido");
+  const emprestimosConcluidos = emprestimos.filter(
+    (e) => e.status === "concluido"
+  );
 
   async function submitUsuario(data: UsuarioForm) {
     const response = await fetch("/api/create/usuarios", {
@@ -187,8 +202,6 @@ export default function Home() {
           type: "manual",
           message: result.mensagem,
         });
-      } else {
-        alert(result.mensagem);
       }
       return;
     }
@@ -211,50 +224,45 @@ export default function Home() {
     carregarDados();
   }
 
-  async function emprestar() {
-    if (!emprestimoData.usuarioId || !emprestimoData.livroId) {
-      alert("Selecione usuário e livro");
-      return;
-    }
-
+  async function onSubmitEmprestimo(data: EmprestimoForm) {
     await fetch("/api/emprestar", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        usuarioId: emprestimoData.usuarioId,
-        livrosIds: [emprestimoData.livroId],
+        usuarioId: data.usuarioId,
+        livrosIds: [data.livroId],
       }),
     });
 
+    resetEmprestimo();
     carregarDados();
   }
 
-  async function devolver() {
-    if (!devolucaoId) {
-      alert("Selecione um empréstimo");
-      return;
-    }
-
+  async function onSubmitDevolucao(data: DevolucaoForm) {
     await fetch("/api/devolver", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        emprestimoId: devolucaoId,
+        emprestimoId: data.emprestimoId,
       }),
     });
 
-    setDevolucaoId("");
+    resetDevolucao();
     carregarDados();
   }
 
   return (
     <div className="min-h-screen flex flex-col bg-slate-100 mt-15">
       <header className="fixed top-0 w-full bg-white/70 backdrop-blur-md border-b shadow-sm px-6 h-16 flex items-center justify-between z-10">
-        <Link href="/" className="text-xl font-semibold text-green-600">📚 Biblioteca - -</Link>
+        <Link href="/" className="text-xl font-semibold text-green-600">
+          📚 Biblioteca
+        </Link>
       </header>
 
-      <main className="flex-16 flex flex-col items-center gap-8 px-4 py-10">
-        <h1 className="text-5xl font-semibold text-green-700 text-center">Sistema de Biblioteca</h1>
+      <main className="flex flex-col items-center gap-8 px-4 py-10">
+        <h1 className="text-5xl font-semibold text-green-700 text-center">
+          Sistema de Biblioteca
+        </h1>
 
         <div className="w-full max-w-5xl bg-white border border-slate-200 rounded-2xl shadow-lg p-8 flex flex-col gap-5">
           <h1 className="text-2xl font-semibold text-green-700 text-left">Cadastro</h1>
@@ -367,74 +375,100 @@ export default function Home() {
             Movimentações
           </h1>
 
-          <div className="flex flex-col gap-3 rounded-xl p-5">
-            <h2 className="font-semibold text-green-600">Realizar Empréstimo</h2>
+          <div className="w-full max-w-5xl bg-white rounded-2xl p-8">
+            <h2 className="text-xl font-semibold text-green-700">
+              Realizar Empréstimo
+            </h2>
 
+            <div className="flex flex-col gap-3 mt-4">
               <label className="text-xs text-slate-500">Usuário</label>
-            <select
-              className="input"
-              onChange={(e) =>
-                setEmprestimoData({ ...emprestimoData, usuarioId: e.target.value })
-              }
-              value={emprestimoData.usuarioId}
-            >
-              <option value="">Selecione</option>
-              {usuarios.map((u) => (
-                <option key={u.id} value={u.id}>
-                {`Usuário: ` + u.nome} | {`E-mail: ` + u.email}
-                </option>
-              ))}
-            </select>
-
-              <label className="text-xs text-slate-500">Livro</label>
-            <select
-              className="input"
-              onChange={(e) =>
-                setEmprestimoData({ ...emprestimoData, livroId: e.target.value })
-              }
-              value={emprestimoData.livroId}
-            >
-              <option value="">Selecione</option>
-              {livros.map((l) => {
-                const disponiveis = l.quantidade - l.qtdEmprestados;
-                const esgotado = disponiveis <= 0;
-
-                return (
-                  <option key={l.id} value={l.id} disabled={esgotado}>
-                    {`Título: ` + l.titulo} ({disponiveis + ` disponível(s) de ` + l.quantidade}){" "}
-                    {esgotado ? "- Esgotado" : ""}
-                  </option>
-                );
-              })}
-            </select>
-
-            <button onClick={emprestar} className="btn-primary mt-2">
-              Emprestar
-            </button>
-          </div>
-
-          {emprestimosAtivos.length > 0 && (
-            <div className="flex flex-col gap-3 rounded-xl p-5">
-              <h2 className="font-semibold text-green-600">
-                Realizar Devoluções
-              </h2>
 
               <select
                 className="input"
-                onChange={(e) => setDevolucaoId(e.target.value)}
-                value={devolucaoId}
+                {...registerEmprestimo("usuarioId")}
               >
-                <option value="">Selecione</option>
-                {emprestimosAtivos.map((e) => (
-                  <option key={e.id} value={e.id}>
-                    {formatarEmprestimo(e)}
+                <option value="">Selecione o usuário</option>
+                {usuarios.map((u) => (
+                  <option key={u.id} value={u.id}>
+                    {`Usuário: ` + u.nome} | {`E-mail: ` + u.email}
                   </option>
                 ))}
               </select>
+              <label className="text-xs text-slate-500">Livro</label>
 
-              <button onClick={devolver} className="btn-primary mt-2">
-                Devolver
+              {emprestimoErrors.usuarioId && (
+                <span className="text-red-700 text-sm">
+                  {emprestimoErrors.usuarioId.message}
+                </span>
+              )}
+
+              <select
+                className="input"
+                {...registerEmprestimo("livroId")}
+              >
+                <option value="">Selecione o livro</option>
+                {livros.map((l) => {
+                  const disponiveis = l.quantidade - l.qtdEmprestados;
+                  const esgotado = disponiveis <= 0;
+
+                  return (
+                    <option key={l.id} value={l.id} disabled={esgotado}>
+                      {`Título: ` + l.titulo} ({disponiveis + ` disponível(s) de ` + l.quantidade}){" "}
+                      {esgotado ? "- Esgotado" : ""}
+                    </option>
+                  );
+                })}
+              </select>
+
+              {emprestimoErrors.livroId && (
+                <span className="text-red-700 text-sm">
+                  {emprestimoErrors.livroId.message}
+                </span>
+              )}
+
+              <button
+                onClick={emprestimoHandleSubmit(onSubmitEmprestimo)}
+                className="btn-primary"
+              >
+                Emprestar
               </button>
+            </div>
+          </div>
+
+          {emprestimosAtivos.length > 0 && (
+
+            <div className="w-full max-w-5xl bg-white rounded-2xl p-8">
+              <h2 className="text-xl font-semibold text-green-700">
+                Realizar Devolução
+              </h2>
+
+              <div className="flex flex-col gap-3 mt-4">
+                <label className="text-xs text-slate-500">Empréstimo</label>
+                <select
+                  className="input"
+                  {...registerDevolucao("emprestimoId")}
+                >
+                  <option value="">Selecione</option>
+                  {emprestimosAtivos.map((e) => (
+                    <option key={e.id} value={e.id}>
+                      {formatarEmprestimo(e)}
+                    </option>
+                  ))}
+                </select>
+
+                {devolucaoErrors.emprestimoId && (
+                  <span className="text-red-700 text-sm">
+                    {devolucaoErrors.emprestimoId.message}
+                  </span>
+                )}
+
+                <button
+                  onClick={devolucaoHandleSubmit(onSubmitDevolucao)}
+                  className="btn-primary"
+                >
+                  Devolver
+                </button>
+              </div>
             </div>
           )}
         </div>

@@ -87,9 +87,77 @@
       "genero": "Terror",
       "quantidade": 5,
       "qtdEmprestados": 0
+    },
+    {
+      "id": "e2f42b99-f51d-448f-a8d2-905aabbc7a39",
+      "titulo": "a",
+      "autor": "aaaa",
+      "genero": "aaaaa",
+      "quantidade": 1,
+      "qtdEmprestados": 0
     }
   ],
   "emprestimos": [
+    {
+      "id": "25fb5bb8-7c07-417d-b4af-7c91ff2337d9",
+      "usuarioId": "a3f2e9d1-6b7c-4f8a-9d12-1ddd5e7f9a01",
+      "livrosIds": [
+        "b4c1d8e2-7a6f-4b9c-8e23-2d4c6f8a0b12"
+      ],
+      "status": "concluido",
+      "data": "2026-03-26T02:23:09.389Z",
+      "dataDevolucao": "2026-03-26T02:28:24.643Z"
+    },
+    {
+      "id": "cecbc622-b67c-423a-89c7-ab1c7d7bd41e",
+      "usuarioId": "a3f2e9d1-6b7c-4f8a-9d12-1ddd5e7f9a01",
+      "livrosIds": [
+        "b4c1d8e2-7a6f-4b9c-8e23-2d4c6f8a0b12"
+      ],
+      "status": "concluido",
+      "data": "2026-03-26T02:43:15.026Z",
+      "dataDevolucao": "2026-03-26T02:54:03.400Z"
+    },
+    {
+      "id": "b3f3ea6b-ba90-4f48-8098-a364ae8087f3",
+      "usuarioId": "a3f2e9d1-6b7c-4f8a-9d12-1ddd5e7f9a01",
+      "livrosIds": [
+        "a3f2e9d1-6b7c-4f8a-9d12-1c3b5e7f9a01"
+      ],
+      "status": "concluido",
+      "data": "2026-03-26T02:46:40.997Z",
+      "dataDevolucao": "2026-03-26T02:54:00.315Z"
+    },
+    {
+      "id": "71bfeeef-5a4c-4f97-aac4-65d281b49eea",
+      "usuarioId": "a3f2e9d1-6b7c-4f8a-9d12-1ddd5e7f9a01",
+      "livrosIds": [
+        "1d36bf2f-5943-442b-a314-638079743eae"
+      ],
+      "status": "concluido",
+      "data": "2026-03-26T02:47:36.955Z",
+      "dataDevolucao": "2026-03-26T02:47:41.033Z"
+    },
+    {
+      "id": "a2a71ba8-e0f1-462f-8e0c-9934afac0647",
+      "usuarioId": "a3f2e9d1-6b7c-4f8a-9d12-1ddd5e7f9a01",
+      "livrosIds": [
+        "e2f42b99-f51d-448f-a8d2-905aabbc7a39"
+      ],
+      "status": "concluido",
+      "data": "2026-03-26T02:49:43.139Z",
+      "dataDevolucao": "2026-03-26T02:54:01.680Z"
+    },
+    {
+      "id": "10cc689b-c51e-4644-abc1-ef7b2a021e00",
+      "usuarioId": "b4c1d8e2-7a6f-4b9c-8e23-2ddd6f8a0b12",
+      "livrosIds": [
+        "b4c1d8e2-7a6f-4b9c-8e23-2d4c6f8a0b12"
+      ],
+      "status": "concluido",
+      "data": "2026-03-26T02:54:57.075Z",
+      "dataDevolucao": "2026-03-26T02:55:00.232Z"
+    }
   ],
   "usuarios": [
     {

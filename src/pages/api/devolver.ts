@@ -5,53 +5,53 @@ import path from 'path';
 const filePath = path.join(process.cwd(), 'src', 'pages', 'api', 'bd.json');
 
 interface Livro {
-  id: string;
-  titulo: string;
-  autor: string;
-  genero: string;
-  quantidade: number;
-  qtdEmprestados: number;
+  id: string
+  titulo: string
+  autor: string
+  genero: string
+  quantidade: number
+  qtdEmprestados: number
 }
 
 interface Emprestimo {
-  id: string;
-  usuarioId: string;
-  livrosIds: string[];
-  status: string;
-  data: string;
-  dataDevolucao?: string;
+  id: string
+  usuarioId: string
+  livrosIds: string[]
+  status: string
+  data: string
+  dataDevolucao?: string
 }
 
 export default function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== 'POST') {
-    return res.status(405).json({ mensagem: 'Método não permitido' });
+    return res.status(405).json({ mensagem: 'Método não permitido' })
   }
 
-  const jsonData = fs.readFileSync(filePath, 'utf-8');
+  const jsonData = fs.readFileSync(filePath, 'utf-8')
   const parsed = JSON.parse(jsonData);
   const livros: Livro[] = (parsed.livros || []).map((l: Livro) => ({
     ...l,
     qtdEmprestados: l.qtdEmprestados ?? 0
   }));
   const emprestimos: Emprestimo[] = parsed.emprestimos || [];
-  const { emprestimoId } = req.body;
+  const { emprestimoId } = req.body
 
   if (!emprestimoId) {
-    return res.status(400).json({ mensagem: 'emprestimoId é obrigatório' });
+    return res.status(400).json({ mensagem: 'emprestimoId é obrigatório' })
   }
 
   const emprestimo = emprestimos.find(e => e.id === emprestimoId);
 
   if (!emprestimo) {
-    return res.status(404).json({ mensagem: 'Empréstimo não encontrado' });
+    return res.status(404).json({ mensagem: 'Empréstimo não encontrado' })
   }
 
   if (emprestimo.status === 'concluido') {
-    return res.status(400).json({ mensagem: 'Empréstimo já foi concluído' });
+    return res.status(400).json({ mensagem: 'Empréstimo já foi concluído' })
   }
 
   emprestimo.livrosIds.forEach(id => {
-    const livro = livros.find(l => l.id === id);
+    const livro = livros.find(l => l.id === id)
     if (livro && livro.qtdEmprestados > 0) {
       livro.qtdEmprestados -= 1;
     }

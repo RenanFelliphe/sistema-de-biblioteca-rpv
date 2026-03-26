@@ -6,58 +6,58 @@ import { v4 as uuidv4 } from 'uuid';
 const filePath = path.join(process.cwd(), 'src', 'pages', 'api', 'bd.json');
 
 interface Usuario {
-  id: string;
-  nome: string;
-  email: string;
-  telefone: string;
+  id: string
+  nome: string
+  email: string
+  telefone: string
 }
 
 interface Livro {
-  id: string;
-  titulo: string;
-  autor: string;
-  genero: string;
-  quantidade: number;
-  qtdEmprestados: number;
+  id: string
+  titulo: string
+  autor: string
+  genero: string
+  quantidade: number
+  qtdEmprestados: number
 }
 
 interface Emprestimo {
-  id: string;
-  usuarioId: string;
-  livrosIds: string[];
-  status: string;
-  data: string;
-  dataDevolucao?: string;
+  id: string
+  usuarioId: string
+  livrosIds: string[]
+  status: string
+  data: string
+  dataDevolucao?: string
 }
 
 export default function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== 'POST') {
-    return res.status(405).json({ mensagem: 'Método não permitido' });
+    return res.status(405).json({ mensagem: 'Método não permitido' })
   }
 
-  const jsonData = fs.readFileSync(filePath, 'utf-8');
-  const parsed = JSON.parse(jsonData);
-  const usuarios: Usuario[] = parsed.usuarios || [];
+  const jsonData = fs.readFileSync(filePath, 'utf-8')
+  const parsed = JSON.parse(jsonData)
+  const usuarios: Usuario[] = parsed.usuarios || []
   const livros: Livro[] = (parsed.livros || []).map((l: Livro) => ({
     ...l,
     qtdEmprestados: l.qtdEmprestados ?? 0
   }));
-  const emprestimos: Emprestimo[] = parsed.emprestimos || [];
-  const { usuarioId, livrosIds } = req.body;
+  const emprestimos: Emprestimo[] = parsed.emprestimos || []
+  const { usuarioId, livrosIds } = req.body
 
   if (!usuarioId || !livrosIds || !Array.isArray(livrosIds)) {
-    return res.status(400).json({ mensagem: 'usuarioId e livrosIds são obrigatórios' });
+    return res.status(400).json({ mensagem: 'usuarioId e livrosIds são obrigatórios' })
   }
 
-  const usuarioExiste = usuarios.find(u => u.id === usuarioId);
+  const usuarioExiste = usuarios.find(u => u.id === usuarioId)
   if (!usuarioExiste) {
-    return res.status(404).json({ mensagem: 'Usuário não encontrado' });
+    return res.status(404).json({ mensagem: 'Usuário não encontrado' })
   }
 
-  const livrosSelecionados = livrosIds.map(id => livros.find(l => l.id === id));
+  const livrosSelecionados = livrosIds.map(id => livros.find(l => l.id === id))
 
   if (livrosSelecionados.some(l => !l)) {
-    return res.status(404).json({ mensagem: 'Um ou mais livros não existem' });
+    return res.status(404).json({ mensagem: 'Um ou mais livros não existem' })
   }
 
   for (let livro of livrosSelecionados) {
@@ -77,7 +77,7 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
   };
 
   livrosIds.forEach(id => {
-    const livro = livros.find(l => l.id === id);
+    const livro = livros.find(l => l.id === id)
     if (livro) {
       livro.qtdEmprestados += 1;
     }
