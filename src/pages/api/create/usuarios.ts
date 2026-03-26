@@ -3,7 +3,6 @@ import fs from 'fs';
 import path from 'path';
 import { v4 as uuidv4 } from 'uuid';
 
-// Caminho absoluto para o arquivo de dados
 const filePath = path.join(process.cwd(), 'src', 'pages', 'api', 'bd.json');
 
 interface Usuario {
@@ -24,7 +23,6 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
         return res.status(400).json({ mensagem: 'Nome, email e telefone são obrigatórios.' });
     }
 
-    // verificar se o email já existe
     if (usuarios.some((user) => user.email === email)) {
         return res.status(400).json({ mensagem: 'Usuário já cadastrado com este e-mail!' });
     }

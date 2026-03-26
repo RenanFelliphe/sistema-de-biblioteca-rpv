@@ -6,7 +6,7 @@
       "autor": "Machado de Assis",
       "genero": "Romance",
       "quantidade": 5,
-      "qtdEmprestados": 1
+      "qtdEmprestados": 0
     },
     {
       "id": "b4c1d8e2-7a6f-4b9c-8e23-2d4c6f8a0b12",
@@ -85,79 +85,11 @@
       "titulo": "Dracula",
       "autor": "Bram Stoker",
       "genero": "Terror",
-      "quantidade": 1,
-      "qtdEmprestados": 1
+      "quantidade": 5,
+      "qtdEmprestados": 0
     }
   ],
   "emprestimos": [
-    {
-      "id": "ee5d9dd4-2147-4e0e-b503-2b637fe417bc",
-      "usuarioId": "a3f2e9d1-6b7c-4f8a-9d12-1ddd5e7f9a01",
-      "livrosIds": [
-        "1d36bf2f-5943-442b-a314-638079743eae"
-      ],
-      "status": "concluido",
-      "data": "2026-03-25T18:51:19.432Z",
-      "dataDevolucao": "2026-03-25T18:51:26.735Z"
-    },
-    {
-      "id": "8e0ea91b-e7a0-469d-9ab6-e661a3361859",
-      "usuarioId": "a3f2e9d1-6b7c-4f8a-9d12-1ddd5e7f9a01",
-      "livrosIds": [
-        "1d36bf2f-5943-442b-a314-638079743eae"
-      ],
-      "status": "concluido",
-      "data": "2026-03-25T19:12:38.737Z",
-      "dataDevolucao": "2026-03-25T19:24:43.655Z"
-    },
-    {
-      "id": "ec21b481-d515-4f73-b600-16828628c178",
-      "usuarioId": "887e1fa2-7cef-40ca-947f-6a6b6c6ddffb",
-      "livrosIds": [
-        "f8a5b4c6-be2d-4f30-c167-6b8a0d2e4f56"
-      ],
-      "status": "concluido",
-      "data": "2026-03-25T19:14:22.237Z",
-      "dataDevolucao": "2026-03-25T19:49:56.444Z"
-    },
-    {
-      "id": "e5fa6f35-8e94-4bcc-bd35-59dc8d440a33",
-      "usuarioId": "a3f2e9d1-6b7c-4f8a-9d12-1ddd5e7f9a01",
-      "livrosIds": [
-        "1d36bf2f-5943-442b-a314-638079743eae"
-      ],
-      "status": "concluido",
-      "data": "2026-03-25T19:35:05.026Z",
-      "dataDevolucao": "2026-03-25T19:49:52.796Z"
-    },
-    {
-      "id": "c06cb0ce-d461-4af0-9ee8-3a2551fc03b8",
-      "usuarioId": "c5d2e7f3-8b5a-4c0d-9f34-3ddd7a9b1c23",
-      "livrosIds": [
-        "a3f2e9d1-6b7c-4f8a-9d12-1c3b5e7f9a01"
-      ],
-      "status": "concluido",
-      "data": "2026-03-25T19:42:59.050Z",
-      "dataDevolucao": "2026-03-25T19:49:49.077Z"
-    },
-    {
-      "id": "d1c07b15-e945-4227-be4c-5cb951b66832",
-      "usuarioId": "a3f2e9d1-6b7c-4f8a-9d12-1ddd5e7f9a01",
-      "livrosIds": [
-        "a3f2e9d1-6b7c-4f8a-9d12-1c3b5e7f9a01"
-      ],
-      "status": "ativo",
-      "data": "2026-03-25T19:54:33.059Z"
-    },
-    {
-      "id": "7575f036-69d4-40b1-a29a-7d6a23036d5d",
-      "usuarioId": "887e1fa2-7cef-40ca-947f-6a6b6c6ddffb",
-      "livrosIds": [
-        "1d36bf2f-5943-442b-a314-638079743eae"
-      ],
-      "status": "ativo",
-      "data": "2026-03-25T20:32:59.429Z"
-    }
   ],
   "usuarios": [
     {
@@ -194,6 +126,12 @@
       "id": "887e1fa2-7cef-40ca-947f-6a6b6c6ddffb",
       "nome": "RENAN FELLIPHE DE MOURA DIOGO SILVA",
       "email": "0001184172@senaimgaluno.com.br",
+      "telefone": "32988266211"
+    },
+    {
+      "id": "7be1a668-1e73-4ebc-bbae-31aef909cdb2",
+      "nome": "RENAN FELLIPHE DE MOURA DIOGO SILVA",
+      "email": "felliphemouraa@gmail.com",
       "telefone": "32988266211"
     }
   ]

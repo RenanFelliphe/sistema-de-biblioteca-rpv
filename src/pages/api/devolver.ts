@@ -4,7 +4,6 @@ import path from 'path';
 
 const filePath = path.join(process.cwd(), 'src', 'pages', 'api', 'bd.json');
 
-// 🧠 Interfaces
 interface Livro {
   id: string;
   titulo: string;
@@ -30,30 +29,27 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
 
   const jsonData = fs.readFileSync(filePath, 'utf-8');
   const parsed = JSON.parse(jsonData);
-
-  const livros: Livro[] = parsed.livros || [];
+  const livros: Livro[] = (parsed.livros || []).map((l: Livro) => ({
+    ...l,
+    qtdEmprestados: l.qtdEmprestados ?? 0
+  }));
   const emprestimos: Emprestimo[] = parsed.emprestimos || [];
-
   const { emprestimoId } = req.body;
 
-  // 🔴 Validação
   if (!emprestimoId) {
     return res.status(400).json({ mensagem: 'emprestimoId é obrigatório' });
   }
 
-  // 🔍 Buscar empréstimo
   const emprestimo = emprestimos.find(e => e.id === emprestimoId);
 
   if (!emprestimo) {
     return res.status(404).json({ mensagem: 'Empréstimo não encontrado' });
   }
 
-  // 🔴 Já concluído?
   if (emprestimo.status === 'concluido') {
     return res.status(400).json({ mensagem: 'Empréstimo já foi concluído' });
   }
 
-  // 🔄 Atualizar livros
   emprestimo.livrosIds.forEach(id => {
     const livro = livros.find(l => l.id === id);
     if (livro && livro.qtdEmprestados > 0) {
@@ -61,11 +57,9 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
     }
   });
 
-  // ✅ Atualizar status
   emprestimo.status = 'concluido';
   emprestimo.dataDevolucao = new Date().toISOString();
 
-  // 💾 Salvar
   fs.writeFileSync(
     filePath,
     JSON.stringify({ ...parsed, livros, emprestimos }, null, 2)
