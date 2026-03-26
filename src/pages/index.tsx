@@ -45,7 +45,7 @@ const livroSchema = z.object({
   titulo: z.string().min(1, "O título é obrigatório"),
   autor: z.string().min(3, "O autor é obrigatório"),
   genero: z.string().min(5, "O gênero é obrigatório"),
-  quantidade: z.number().positive("A quantidade é obrigatória"),
+  quantidade: z.number("Quantidade inválida").positive("A quantidade é obrigatória"),
 });
 
 const emprestimoSchema = z.object({
@@ -376,59 +376,58 @@ export default function Home() {
           </h1>
 
           <div className="w-full max-w-5xl bg-white rounded-2xl p-8">
-            <h2 className="text-xl font-semibold text-green-700">
-              Realizar Empréstimo
-            </h2>
+            <h2 className="font-semibold text-green-600">Realizar Empréstimo</h2>
 
             <div className="flex flex-col gap-3 mt-4">
-              <label className="text-xs text-slate-500">Usuário</label>
-
-              <select
-                className="input"
-                {...registerEmprestimo("usuarioId")}
-              >
-                <option value="">Selecione o usuário</option>
-                {usuarios.map((u) => (
-                  <option key={u.id} value={u.id}>
-                    {`Usuário: ` + u.nome} | {`E-mail: ` + u.email}
-                  </option>
-                ))}
-              </select>
-              <label className="text-xs text-slate-500">Livro</label>
-
-              {emprestimoErrors.usuarioId && (
-                <span className="text-red-700 text-sm">
-                  {emprestimoErrors.usuarioId.message}
-                </span>
-              )}
-
-              <select
-                className="input"
-                {...registerEmprestimo("livroId")}
-              >
-                <option value="">Selecione o livro</option>
-                {livros.map((l) => {
-                  const disponiveis = l.quantidade - l.qtdEmprestados;
-                  const esgotado = disponiveis <= 0;
-
-                  return (
-                    <option key={l.id} value={l.id} disabled={esgotado}>
-                      {`Título: ` + l.titulo} ({disponiveis + ` disponível(s) de ` + l.quantidade}){" "}
-                      {esgotado ? "- Esgotado" : ""}
+              <div className="relative h-18">
+                <label className="text-xs pl-1 text-slate-500">Usuário</label>
+                <select
+                  className="input"
+                  {...registerEmprestimo("usuarioId")}
+                >
+                  <option value="">Selecione o usuário</option>
+                  {usuarios.map((u) => (
+                    <option key={u.id} value={u.id}>
+                      {`Usuário: ` + u.nome} | {`E-mail: ` + u.email}
                     </option>
-                  );
-                })}
-              </select>
+                  ))}
+                </select>
+                {emprestimoErrors.usuarioId && (
+                  <span className="text-red-700 text-xs pl-1">
+                    {emprestimoErrors.usuarioId.message}
+                  </span>
+                )}
+              </div>
+              
+              <div className="relative h-18">
+                <label className="text-xs pl-1 text-slate-500">Livro</label>
+                <select
+                  className="input"
+                  {...registerEmprestimo("livroId")}
+                >
+                  <option value="">Selecione o livro</option>
+                  {livros.map((l) => {
+                    const disponiveis = l.quantidade - l.qtdEmprestados;
+                    const esgotado = disponiveis <= 0;
 
-              {emprestimoErrors.livroId && (
-                <span className="text-red-700 text-sm">
-                  {emprestimoErrors.livroId.message}
-                </span>
-              )}
+                    return (
+                      <option key={l.id} value={l.id} disabled={esgotado}>
+                        {`Título: ` + l.titulo} ({disponiveis + ` disponível(s) de ` + l.quantidade}){" "}
+                        {esgotado ? "- Esgotado" : ""}
+                      </option>
+                    );
+                  })}
+                </select>
+                {emprestimoErrors.livroId && (
+                  <span className="text-red-700 text-xs pl-1">
+                    {emprestimoErrors.livroId.message}
+                  </span>
+                )}
+              </div>
 
               <button
                 onClick={emprestimoHandleSubmit(onSubmitEmprestimo)}
-                className="btn-primary"
+                className="btn-primary mt-2"
               >
                 Emprestar
               </button>
@@ -438,33 +437,33 @@ export default function Home() {
           {emprestimosAtivos.length > 0 && (
 
             <div className="w-full max-w-5xl bg-white rounded-2xl p-8">
-              <h2 className="text-xl font-semibold text-green-700">
-                Realizar Devolução
-              </h2>
+              <h2 className="font-semibold text-green-600">Realizar Devolução</h2>
 
               <div className="flex flex-col gap-3 mt-4">
-                <label className="text-xs text-slate-500">Empréstimo</label>
-                <select
-                  className="input"
-                  {...registerDevolucao("emprestimoId")}
-                >
-                  <option value="">Selecione</option>
-                  {emprestimosAtivos.map((e) => (
-                    <option key={e.id} value={e.id}>
-                      {formatarEmprestimo(e)}
-                    </option>
-                  ))}
-                </select>
+                <div className="relative h-18">
+                  <label className="text-xs text-slate-500 pl-1">Empréstimo</label>
+                  <select
+                    className="input"
+                    {...registerDevolucao("emprestimoId")}
+                  >
+                    <option value="">Selecione</option>
+                    {emprestimosAtivos.map((e) => (
+                      <option key={e.id} value={e.id}>
+                        {formatarEmprestimo(e)}
+                      </option>
+                    ))}
+                  </select>
 
-                {devolucaoErrors.emprestimoId && (
-                  <span className="text-red-700 text-sm">
-                    {devolucaoErrors.emprestimoId.message}
-                  </span>
-                )}
+                  {devolucaoErrors.emprestimoId && (
+                    <span className="text-red-700 text-xs pl-1">
+                      {devolucaoErrors.emprestimoId.message}
+                    </span>
+                  )}
+                </div>
 
                 <button
                   onClick={devolucaoHandleSubmit(onSubmitDevolucao)}
-                  className="btn-primary"
+                  className="btn-primary mt-2"
                 >
                   Devolver
                 </button>
